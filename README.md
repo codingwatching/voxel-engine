@@ -1,5 +1,5 @@
 ## Sjoerd's Voxel Engine
-<img width="720" src="https://github.com/sjoerdev/voxel-engine/assets/59654421/27839c4e-da45-4b71-8ce1-61472fc9781e">
+<img width="720" src="https://github.com/sjoerdev/voxel-engine/assets/59654421/4d1f0fa2-76aa-4f44-b7cd-bf535e3cdd4d">
 
 ## Features:
 - Ray Tracing
@@ -8,12 +8,13 @@
 - Support for a wide range of gpu's
 - 3D simplex noise data generation
 - Volumetric ambient occlusion (vvao)
+- Runs on both Linux and Windows
 
 ## System Requirements:
-- Windows with .NET 7 runtime
+- The .NET 8 runtime
 - OpenGL 3.3 capable GPU
-- Visual C++ Redistributable
 
 ## Gallery:
-<img width="720" src="https://github.com/sjoerdev/voxel-engine/assets/59654421/b1be6745-95c4-4561-97be-7dbaa4ddf14d">
-<img width="720" src="https://github.com/sjoerdev/voxel-engine/assets/59654421/304425b8-39ae-45c1-a5b5-215952d14409">
+<img width="720" src="https://github.com/sjoerdev/voxel-engine/assets/59654421/c85557f6-bf82-4c2a-8b2e-c05d298bc103">
+<img width="720" src="https://github.com/sjoerdev/voxel-engine/assets/59654421/0439b611-fe96-4b93-9f20-4719b3243dc2">
+<img width="720" src="https://github.com/sjoerdev/voxel-engine/assets/59654421/4d1f0fa2-76aa-4f44-b7cd-bf535e3cdd4d">
