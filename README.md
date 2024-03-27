@@ -9,6 +9,7 @@
 - 3D simplex noise data generation
 - Volumetric ambient occlusion (vvao)
 - Runs on both Linux and Windows
+- Support for Magica (.vox) models
 
 ## System Requirements:
 - The .NET 8 runtime
