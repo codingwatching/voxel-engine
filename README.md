@@ -7,7 +7,7 @@
 - Voxel data serialization
 - Support for a wide range of gpu's
 - 3D simplex noise data generation
-- Volumetric ambient occlusion [vvao](https://www.youtube.com/watch?v=3WaLMBiezMU)
+- Volumetric ambient occlusion [(vvao)](https://www.youtube.com/watch?v=3WaLMBiezMU)
 - Runs on both Linux and Windows
 - Support for Magica (.vox) models
 
