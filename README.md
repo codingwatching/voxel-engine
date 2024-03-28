@@ -6,13 +6,13 @@
 - Real time voxel editing (sculpting)
 - Voxel data serialization
 - Support for a wide range of gpu's
-- 3D simplex noise data generation
-- Volumetric ambient occlusion [(vvao)](https://www.youtube.com/watch?v=3WaLMBiezMU)
+- 3D [simplex](https://github.com/WardBenjamin/SimplexNoise/blob/master/SimplexNoise/Noise.cs) noise data generation
+- Volumetric ambient occlusion ([vvao](https://www.youtube.com/watch?v=3WaLMBiezMU))
 - Runs on both Linux and Windows
-- Support for Magica (.vox) models
+- Support for Magica ([.vox](https://github.com/ephtracy/voxel-model)) models
 
 ## System Requirements:
-- The .NET 8 runtime
+- The [.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) runtime
 - OpenGL 3.3 capable GPU
 
 ## Gallery:
