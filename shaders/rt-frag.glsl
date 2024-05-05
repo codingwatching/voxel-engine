@@ -111,7 +111,7 @@ void main()
 
     // camera
     vec3 eye = camPos;
-    vec3 dir = (view * vec4(uv * 1, 1, 1)).xyz;
+    vec3 dir = (view * vec4(uv * 1, 1, 1)).xyz; // fov is 90 because tan(90 / 2.0) == 1
 
     // offset eye to canvas
     if (canvasCheck) eye = HitBoundingBox(eye, dir, vec3(0), dataSize);

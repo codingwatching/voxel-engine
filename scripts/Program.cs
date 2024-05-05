@@ -60,8 +60,8 @@ class Window : GameWindow
     protected override void OnLoad()
     {
         base.OnLoad();
-        RaymarchingShader = new Shader("shaders/vert.glsl", "shaders/trace.glsl", "shaders/post.glsl", VertexData.fullscreenquad);
-        LinesShader = new Shader("shaders/vert.glsl", "shaders/line.glsl", "shaders/post.glsl", VertexData.lines);
+        RaymarchingShader = new Shader("shaders/rt-vert.glsl", "shaders/rt-frag.glsl", "shaders/fb-vert.glsl", "shaders/fb-frag.glsl", VertexData.fullscreenquad);
+        LinesShader = new Shader("shaders/line-vert.glsl", "shaders/line-frag.glsl", "shaders/fb-vert.glsl", "shaders/fb-frag.glsl", VertexData.lines);
         voxels = new Voxels();
         camera = new Camera();
         imguiHelper = new ImGuiHelper(Size.X, Size.Y);
@@ -90,8 +90,9 @@ class Window : GameWindow
         RaymarchingShader.RenderToFramebuffer((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
         RaymarchingShader.DisplayFramebuffer(Size.X, Size.Y);
 
-        //LinesShader.RenderToFramebuffer((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
-        //LinesShader.DisplayFramebuffer(Size.X, Size.Y);
+        SetCameraMatrices(LinesShader);
+        LinesShader.RenderToFramebuffer((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
+        LinesShader.DisplayFramebuffer(Size.X, Size.Y);
 
         imguiHelper.Render();
 
@@ -132,7 +133,13 @@ class Window : GameWindow
         }
         lastMousePos = new Vector2(mouse.X, mouse.Y);
         cameraDistance -= mouse.ScrollDelta.Y * 10;
-        camera.RotateAround(voxels.size / 2, camOrbitRotation, cameraDistance);
+        camera.RotateAround(voxels.size / 2, camOrbitRotation, cameraDistance, Size.X / Size.Y);
+    }
+
+    private void SetCameraMatrices(Shader shader)
+    {
+        shader.SetMatrix4("view", camera.viewMatrix);
+        shader.SetMatrix4("projection", camera.viewMatrix);
     }
 
     private void SetRaymarchingUniforms(Shader shader)

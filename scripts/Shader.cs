@@ -22,10 +22,10 @@ public class Shader
 
     private VertexData vertexDataType;
 
-    public Shader(string vertexShaderPath, string fragmentShaderPath, string postShaderPath, VertexData type)
+    public Shader(string vertMain, string fragMain, string vertPost, string fragPost, VertexData type)
     {
         // create shaderprogram
-        CreateShaderProgram(vertexShaderPath, fragmentShaderPath, postShaderPath);
+        CreateShaderProgram(vertMain, fragMain, vertPost, fragPost);
 
         // create framebuffer
         CreateFramebuffer();
@@ -98,6 +98,11 @@ public class Shader
         GL.UniformMatrix4(GL.GetUniformLocation(mainProgramHandle, viewMatrixName), true, ref camera.viewMatrix);
         GL.Uniform3(GL.GetUniformLocation(mainProgramHandle, cameraPositionName), camera.position.X, camera.position.Y, camera.position.Z);
     }
+
+    public void SetMatrix4(string name, Matrix4 matrix)
+    {
+        GL.UniformMatrix4(GL.GetUniformLocation(mainProgramHandle, name), true, ref matrix);
+    }
     
     public void SetFloat(string name, float value)
     {
@@ -124,54 +129,63 @@ public class Shader
         GL.Uniform3(GL.GetUniformLocation(mainProgramHandle, name), value.X, value.Y, value.Z);
     }
 
-    public void CreateShaderProgram(string vertexShaderPath, string fragmentShaderPath, string postShaderPath)
+    public void CreateShaderProgram(string vertMain, string fragMain, string vertPost, string fragPost)
     {
         // read shaders
-        string vertCode = File.ReadAllText(vertexShaderPath);
-        string fragCode = File.ReadAllText(fragmentShaderPath);
-        string postCode = File.ReadAllText(postShaderPath);
+        string vertMainCode = File.ReadAllText(vertMain);
+        string fragMainCode = File.ReadAllText(fragMain);
+        string vertPostCode = File.ReadAllText(vertPost);
+        string fragPostCode = File.ReadAllText(fragPost);
 
-        // compile vert
-        int vert = GL.CreateShader(ShaderType.VertexShader);
-        GL.ShaderSource(vert, vertCode);
-        GL.CompileShader(vert);
-        GL.GetShader(vert, ShaderParameter.CompileStatus, out int vStatus);
-        if (vStatus != 1) throw new Exception("Vertex shader failed to compile: " + GL.GetShaderInfoLog(vert));
+        // compile vert main
+        int vm = GL.CreateShader(ShaderType.VertexShader);
+        GL.ShaderSource(vm, vertMainCode);
+        GL.CompileShader(vm);
+        GL.GetShader(vm, ShaderParameter.CompileStatus, out int vmStatus);
+        if (vmStatus != 1) throw new Exception("vert main failed to compile: " + GL.GetShaderInfoLog(vm));
 
-        // compile frag
-        int frag = GL.CreateShader(ShaderType.FragmentShader);
-        GL.ShaderSource(frag, fragCode);
-        GL.CompileShader(frag);
-        GL.GetShader(frag, ShaderParameter.CompileStatus, out int fStatus);
-        if (fStatus != 1) throw new Exception("Fragment shader failed to compile: " + GL.GetShaderInfoLog(frag));
+        // compile frag main
+        int fm = GL.CreateShader(ShaderType.FragmentShader);
+        GL.ShaderSource(fm, fragMainCode);
+        GL.CompileShader(fm);
+        GL.GetShader(fm, ShaderParameter.CompileStatus, out int fmStatus);
+        if (fmStatus != 1) throw new Exception("frag main failed to compile: " + GL.GetShaderInfoLog(fm));
 
-        // compile post
-        int post = GL.CreateShader(ShaderType.FragmentShader);
-        GL.ShaderSource(post, postCode);
-        GL.CompileShader(post);
-        GL.GetShader(post, ShaderParameter.CompileStatus, out int pStatus);
-        if (pStatus != 1) throw new Exception("Post shader failed to compile: " + GL.GetShaderInfoLog(post));
+        // compile vert post
+        int vp = GL.CreateShader(ShaderType.VertexShader);
+        GL.ShaderSource(vp, vertPostCode);
+        GL.CompileShader(vp);
+        GL.GetShader(vp, ShaderParameter.CompileStatus, out int vpStatus);
+        if (vpStatus != 1) throw new Exception("vert post failed to compile: " + GL.GetShaderInfoLog(vp));
+
+        // compile frag post
+        int fp = GL.CreateShader(ShaderType.FragmentShader);
+        GL.ShaderSource(fp, fragPostCode);
+        GL.CompileShader(fp);
+        GL.GetShader(fp, ShaderParameter.CompileStatus, out int fpStatus);
+        if (fpStatus != 1) throw new Exception("frag post failed to compile: " + GL.GetShaderInfoLog(fp));
 
         // create main shader program
         mainProgramHandle = GL.CreateProgram();
-        GL.AttachShader(mainProgramHandle, vert);
-        GL.AttachShader(mainProgramHandle, frag);
+        GL.AttachShader(mainProgramHandle, vm);
+        GL.AttachShader(mainProgramHandle, fm);
         GL.LinkProgram(mainProgramHandle);
-        GL.DetachShader(mainProgramHandle, vert);
-        GL.DetachShader(mainProgramHandle, frag);
+        GL.DetachShader(mainProgramHandle, vm);
+        GL.DetachShader(mainProgramHandle, fm);
 
         // create post shader program
         postProgramHandle = GL.CreateProgram();
-        GL.AttachShader(postProgramHandle, vert);
-        GL.AttachShader(postProgramHandle, post);
+        GL.AttachShader(postProgramHandle, vp);
+        GL.AttachShader(postProgramHandle, fp);
         GL.LinkProgram(postProgramHandle);
-        GL.DetachShader(postProgramHandle, vert);
-        GL.DetachShader(postProgramHandle, post);
+        GL.DetachShader(postProgramHandle, vp);
+        GL.DetachShader(postProgramHandle, fp);
 
         // delete shaders
-        GL.DeleteShader(vert);
-        GL.DeleteShader(frag);
-        GL.DeleteShader(post);
+        GL.DeleteShader(vm);
+        GL.DeleteShader(fm);
+        GL.DeleteShader(vp);
+        GL.DeleteShader(fp);
     }
 
     public void CreateFramebuffer()
@@ -205,8 +219,8 @@ public class Shader
 
         float[] lines =
         [
-            -0.5f, 0.5f, 0f,
-            0.5f, 0.5f, 0f
+            -100f, 0f, 0f,
+            100f, 0f, 0f
         ];
 
         fsvao = CreateVAO(fullscreen);
