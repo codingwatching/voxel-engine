@@ -100,6 +100,9 @@ vec3 VoxelNormal(vec3 coord)
 
 void main()
 {
+    // temp depth
+    gl_FragDepth = 1;
+
     // define bg color
     vec4 bgc = vec4(0.2, 0.2, 0.2, 1.0);
 

@@ -19,8 +19,9 @@ class Window : GameWindow
 {
     ImGuiHelper imguiHelper;
     Camera camera;
-    Shader shader;
     Voxels voxels;
+    Shader RaymarchingShader;
+    Shader LinesShader;
 
     bool firstMouseMovement = true;
     Vector2 lastMousePos;
@@ -59,7 +60,8 @@ class Window : GameWindow
     protected override void OnLoad()
     {
         base.OnLoad();
-        shader = new Shader("shaders/vert.glsl", "shaders/frag.glsl", "shaders/post.glsl");
+        RaymarchingShader = new Shader("shaders/vert.glsl", "shaders/trace.glsl", "shaders/post.glsl", VertexData.fullscreenquad);
+        LinesShader = new Shader("shaders/vert.glsl", "shaders/line.glsl", "shaders/post.glsl", VertexData.lines);
         voxels = new Voxels();
         camera = new Camera();
         imguiHelper = new ImGuiHelper(Size.X, Size.Y);
@@ -68,6 +70,7 @@ class Window : GameWindow
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
+        // time
         base.OnRenderFrame(args);
         float delta = (float)args.Time;
         VSync = vsync ? VSyncMode.On : VSyncMode.Off;
@@ -75,13 +78,23 @@ class Window : GameWindow
         timePassed += delta;
         frametimes.Add(delta);
 
+        // input
         ApplyInput();
         if (showSettings) SettingsWindow();
-        SetShaderUniforms();
-        
-        shader.RenderMain((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
-        shader.RenderPost(Size.X, Size.Y);
+
+        // rendering
+        OpenTK.Graphics.OpenGL.GL.Clear(OpenTK.Graphics.OpenGL.ClearBufferMask.ColorBufferBit);
+        OpenTK.Graphics.OpenGL.GL.Clear(OpenTK.Graphics.OpenGL.ClearBufferMask.DepthBufferBit);
+
+        SetRaymarchingUniforms(RaymarchingShader);
+        RaymarchingShader.RenderToFramebuffer((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
+        RaymarchingShader.DisplayFramebuffer(Size.X, Size.Y);
+
+        //LinesShader.RenderToFramebuffer((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
+        //LinesShader.DisplayFramebuffer(Size.X, Size.Y);
+
         imguiHelper.Render();
+
         Context.SwapBuffers();
     }
 
@@ -122,7 +135,7 @@ class Window : GameWindow
         camera.RotateAround(voxels.size / 2, camOrbitRotation, cameraDistance);
     }
 
-    private void SetShaderUniforms()
+    private void SetRaymarchingUniforms(Shader shader)
     {
         shader.UseMainProgram();
         shader.SetVector2("resolution", (Vector2)Size);
