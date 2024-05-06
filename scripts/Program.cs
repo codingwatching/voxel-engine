@@ -86,9 +86,9 @@ class Window : GameWindow
         OpenTK.Graphics.OpenGL.GL.Clear(OpenTK.Graphics.OpenGL.ClearBufferMask.ColorBufferBit);
         OpenTK.Graphics.OpenGL.GL.Clear(OpenTK.Graphics.OpenGL.ClearBufferMask.DepthBufferBit);
 
-        SetRaymarchingUniforms(RaymarchingShader);
-        RaymarchingShader.RenderToFramebuffer((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
-        RaymarchingShader.DisplayFramebuffer(Size.X, Size.Y);
+        //SetRaymarchingUniforms(RaymarchingShader);
+        //RaymarchingShader.RenderToFramebuffer((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
+        //RaymarchingShader.DisplayFramebuffer(Size.X, Size.Y);
 
         SetCameraMatrices(LinesShader);
         LinesShader.RenderToFramebuffer((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
@@ -133,7 +133,7 @@ class Window : GameWindow
         }
         lastMousePos = new Vector2(mouse.X, mouse.Y);
         cameraDistance -= mouse.ScrollDelta.Y * 10;
-        camera.RotateAround(voxels.size / 2, camOrbitRotation, cameraDistance, Size.X / Size.Y);
+        camera.RotateAround(Vector3.Zero, camOrbitRotation, cameraDistance, Size.X / Size.Y);
     }
 
     private void SetCameraMatrices(Shader shader)
