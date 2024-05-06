@@ -20,6 +20,7 @@ class Window : GameWindow
     ImGuiHelper imguiHelper;
     Camera camera;
     Voxels voxels;
+    Framebuffer framebuffer;
     Shader RaymarchingShader;
     Shader LinesShader;
 
@@ -60,6 +61,7 @@ class Window : GameWindow
     protected override void OnLoad()
     {
         base.OnLoad();
+        framebuffer = new Framebuffer();
         RaymarchingShader = new Shader("shaders/rt-vert.glsl", "shaders/rt-frag.glsl", "shaders/fb-vert.glsl", "shaders/fb-frag.glsl", VertexData.fullscreenquad);
         LinesShader = new Shader("shaders/line-vert.glsl", "shaders/line-frag.glsl", "shaders/fb-vert.glsl", "shaders/fb-frag.glsl", VertexData.lines);
         voxels = new Voxels();
@@ -85,14 +87,15 @@ class Window : GameWindow
         // rendering
         OpenTK.Graphics.OpenGL.GL.Clear(OpenTK.Graphics.OpenGL.ClearBufferMask.ColorBufferBit);
         OpenTK.Graphics.OpenGL.GL.Clear(OpenTK.Graphics.OpenGL.ClearBufferMask.DepthBufferBit);
+        framebuffer.Clear();
 
         SetRaymarchingUniforms(RaymarchingShader);
-        RaymarchingShader.RenderToFramebuffer((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
-        RaymarchingShader.DisplayFramebuffer(Size.X, Size.Y);
+        RaymarchingShader.RenderToFramebuffer(Size, renderScale, framebuffer);
 
         SetCameraMatrices(LinesShader);
-        LinesShader.RenderToFramebuffer((int)(Size.X * renderScale), (int)(Size.Y * renderScale));
-        LinesShader.DisplayFramebuffer(Size.X, Size.Y);
+        LinesShader.RenderToFramebuffer(Size, renderScale, framebuffer);
+
+        RaymarchingShader.DisplayFramebuffer(Size, framebuffer);
 
         imguiHelper.Render();
 
@@ -133,7 +136,7 @@ class Window : GameWindow
         }
         lastMousePos = new Vector2(mouse.X, mouse.Y);
         cameraDistance -= mouse.ScrollDelta.Y * 10;
-        camera.RotateAround(Vector3.Zero, camOrbitRotation, -cameraDistance, Size.X / Size.Y);
+        camera.RotateAround(voxels.size / 2, camOrbitRotation, -cameraDistance, Size.X / Size.Y);
     }
 
     private void SetCameraMatrices(Shader shader)

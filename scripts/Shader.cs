@@ -14,9 +14,6 @@ public class Shader
     public int mainProgramHandle;
     public int postProgramHandle;
 
-    public int fbo;
-    public int fbtex;
-
     public int fsvao;
     public int lsvao;
 
@@ -27,28 +24,28 @@ public class Shader
         // create shaderprogram
         CreateShaderProgram(vertMain, fragMain, vertPost, fragPost);
 
-        // create framebuffer
-        CreateFramebuffer();
-
         // setup vertex data
         CreateVertexDataTypes();
         vertexDataType = type;
     }
 
-    public void RenderToFramebuffer(int width, int height)
+    public void RenderToFramebuffer(Vector2i resolution, float renderScale, Framebuffer framebuffer)
     {
-        GL.Enable(EnableCap.DepthTest);
+        int width = (int)(resolution.X * renderScale);
+        int height = (int)(resolution.X * renderScale);
 
         // resize framebuffer texture
-        GL.BindTexture(TextureTarget.Texture2D, fbtex);
+        GL.BindTexture(TextureTarget.Texture2D, framebuffer.texture);
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, width, height, 0, PixelFormat.Rgb, PixelType.Float, 0);
         GL.BindTexture(TextureTarget.Texture2D, 0);
 
-        // render main shader program
+        // setup
+        GL.Enable(EnableCap.DepthTest);
         GL.Viewport(0, 0, width, height);
         GL.UseProgram(mainProgramHandle);
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, fbo);
-        GL.Clear(ClearBufferMask.ColorBufferBit);
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, framebuffer.handle);
+
+        // render
         if (vertexDataType == VertexData.fullscreenquad)
         {
             GL.BindVertexArray(fsvao);
@@ -59,18 +56,19 @@ public class Shader
             GL.BindVertexArray(lsvao);
             GL.DrawArrays(PrimitiveType.Lines, 0, 2);
         }
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
+        // cleanup
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         GL.Disable(EnableCap.DepthTest);
     }
 
-    public void DisplayFramebuffer(int width, int height)
+    public void DisplayFramebuffer(Vector2i resolution, Framebuffer framebuffer)
     {
-        GL.Viewport(0, 0, width, height);
+        GL.Viewport(0, 0, resolution.X, resolution.Y);
         GL.UseProgram(postProgramHandle);
         GL.Uniform1(GL.GetUniformLocation(postProgramHandle, "fbtex"), 0);
         GL.ActiveTexture(TextureUnit.Texture0);
-        GL.BindTexture(TextureTarget.Texture2D, fbtex);
+        GL.BindTexture(TextureTarget.Texture2D, framebuffer.texture);
         GL.BindVertexArray(fsvao);
         GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
     }
@@ -187,23 +185,6 @@ public class Shader
         GL.DeleteShader(fm);
         GL.DeleteShader(vp);
         GL.DeleteShader(fp);
-    }
-
-    public void CreateFramebuffer()
-    {
-        // create framebuffer
-        fbo = GL.GenFramebuffer();
-
-        // create framebuffer texture
-        fbtex = GL.GenTexture();
-        GL.BindTexture(TextureTarget.Texture2D, fbtex);
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, 1280, 720, 0, PixelFormat.Rgb, PixelType.Float, 0);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-        GL.BindTexture(TextureTarget.Texture2D, 0);
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, fbo);
-        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, fbtex, 0);
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
     }
 
     public void CreateVertexDataTypes()
