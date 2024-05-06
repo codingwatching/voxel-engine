@@ -101,7 +101,7 @@ public class Shader
 
     public void SetMatrix4(string name, Matrix4 matrix)
     {
-        GL.UniformMatrix4(GL.GetUniformLocation(mainProgramHandle, name), true, ref matrix);
+        GL.UniformMatrix4(GL.GetUniformLocation(mainProgramHandle, name), false, ref matrix);
     }
     
     public void SetFloat(string name, float value)
