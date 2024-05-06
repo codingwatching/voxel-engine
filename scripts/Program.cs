@@ -133,13 +133,14 @@ class Window : GameWindow
         }
         lastMousePos = new Vector2(mouse.X, mouse.Y);
         cameraDistance -= mouse.ScrollDelta.Y * 10;
-        camera.RotateAround(Vector3.Zero, camOrbitRotation, cameraDistance, Size.X / Size.Y);
+        camera.RotateAround(Vector3.Zero, camOrbitRotation, -cameraDistance, Size.X / Size.Y);
     }
 
     private void SetCameraMatrices(Shader shader)
     {
+        shader.UseMainProgram();
         shader.SetMatrix4("view", camera.viewMatrix);
-        shader.SetMatrix4("projection", camera.viewMatrix);
+        shader.SetMatrix4("projection", camera.projectionMatrix);
     }
 
     private void SetRaymarchingUniforms(Shader shader)
