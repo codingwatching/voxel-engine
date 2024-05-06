@@ -27,6 +27,6 @@ public class Camera
         up = Vector3.Normalize(Vector3.Cross(right, front));
         position = target + front * offset;
         viewMatrix = Matrix4.LookAt(position, position + front, up);
-        projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90), aspect, near, far);
+        projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(52), aspect, near, far);
     }
 }
