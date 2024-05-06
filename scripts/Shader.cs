@@ -48,6 +48,7 @@ public class Shader
         GL.Viewport(0, 0, width, height);
         GL.UseProgram(mainProgramHandle);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, fbo);
+        GL.Clear(ClearBufferMask.ColorBufferBit);
         if (vertexDataType == VertexData.fullscreenquad)
         {
             GL.BindVertexArray(fsvao);
