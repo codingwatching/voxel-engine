@@ -136,13 +136,25 @@ class Window : GameWindow
         }
         lastMousePos = new Vector2(mouse.X, mouse.Y);
         cameraDistance -= mouse.ScrollDelta.Y * 10;
-        camera.RotateAround(voxels.size / 2, camOrbitRotation, -cameraDistance, Size.X / Size.Y);
+        camera.RotateAround(voxels.size / 2, camOrbitRotation, cameraDistance, Size.X / Size.Y);
+    }
+
+    public static Matrix4 ToRightHanded(Matrix4 leftHanded)
+    {
+        Matrix4 conversionMatrix = new Matrix4
+        (
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, -1, 0,
+            0, 0, 0, 1
+        );
+        return leftHanded * conversionMatrix;
     }
 
     private void SetCameraMatrices(Shader shader)
     {
         shader.UseMainProgram();
-        shader.SetMatrix4("view", camera.viewMatrix);
+        shader.SetMatrix4("view", ToRightHanded(camera.viewMatrix));
         shader.SetMatrix4("projection", camera.projectionMatrix);
     }
 

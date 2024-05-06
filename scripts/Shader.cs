@@ -54,7 +54,7 @@ public class Shader
         if (vertexDataType == VertexData.lines)
         {
             GL.BindVertexArray(lsvao);
-            GL.DrawArrays(PrimitiveType.Lines, 0, 2);
+            GL.DrawArrays(PrimitiveType.LineStrip, 0, 16);
         }
 
         // cleanup
@@ -199,10 +199,31 @@ public class Shader
             -1f, -1f, 0f,
         ];
 
-        float[] lines =
+        float[] lines = 
         [
-            -100f, 0f, 0f,
-            100f, 0f, 0f
+            // Bottom face
+            0f, 0f, 0f,
+            512f, 0f, 0f,
+            512f, 227f, 0f,
+            0f, 227f, 0f,
+            0f, 0f, 0f,
+            
+            // Top face
+            0f, 0f, 339f,
+            512f, 0f, 339f,
+            512f, 227f, 339f,
+            0f, 227f, 339f,
+            0f, 0f, 339f,
+
+            // Connecting faces
+            512f, 0f, 0f,
+            512f, 0f, 339f,
+
+            512f, 227f, 0f,
+            512f, 227f, 339f,
+
+            0f, 227f, 0f,
+            0f, 227f, 339f
         ];
 
         fsvao = CreateVAO(fullscreen);
